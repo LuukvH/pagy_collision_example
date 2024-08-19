@@ -1,0 +1,23 @@
+name: PR workflow
+
+on:
+  pull_request:
+
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rspec:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup ruby
+        uses: ./.github/workflows/composite/ruby
+
+      - name: Run RSpec
+        run: bundle exec rspec --format RSpec::Github::Formatter --format progress
